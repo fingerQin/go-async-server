@@ -6,11 +6,6 @@
 
 package Utils
 
-import "fmt"
-import "os"
-
-import "github.com/go-ini/ini"
-
 /**
  * 当前正在执行的消息数量。
  */
@@ -22,12 +17,8 @@ var ingCountChan chan int
 var maxCount int
 
 func init() {
-	cfg, err := ini.Load("./config/config.ini")
-	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
-		os.Exit(1)
-	}
-	maxCount := cfg.Section("server").Key("qos").MustInt()
+	conf := Conf{}
+	maxCount := conf.GetInt("server", "qos")
 	ingCountChan = make(chan int, maxCount)
 }
 
