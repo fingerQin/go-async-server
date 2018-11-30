@@ -1,7 +1,6 @@
 package main
 
 import "fmt"
-import "os"
 import "time"
 
 // import "github.com/go-sql-driver/mysql"
@@ -13,7 +12,6 @@ import "time"
 // import "github.com/go-gomail/gomail"
 // import "github.com/dchest/captcha"
 
-import "github.com/go-ini/ini"
 import "github.com/go-redis/redis"
 
 import "Utils"
@@ -28,21 +26,17 @@ func ProcessLogic(qos Utils.Qos, element string) {
 
 func main() {
 	// [1]
-	cfg, err := ini.Load("./config/config.ini")
-	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
-		os.Exit(1)
-	}
-	fmt.Println(cfg.Section("server").Key("qos").MustInt())
+	conf := Utils.Conf{}
+	fmt.Println(conf.GetString("server", "qos"))
 
 	// [2]
 	qos := Utils.Qos{0, 0}
 
 	// [3]
-	redisHost := cfg.Section("redis").Key("default.host").String()
-	redisPort := cfg.Section("redis").Key("default.port").String()
-	redisIndex := cfg.Section("redis").Key("default.index").MustInt()
-	redisPwd := cfg.Section("redis").Key("default.auth").String()
+	redisHost := conf.GetString("redis", "default.host")
+	redisPort := conf.GetString("redis", "default.port")
+	redisIndex := conf.GetInt("redis", "default.index")
+	redisPwd := conf.GetString("redis", "default.auth")
 	addr := redisHost + ":" + redisPort
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
