@@ -6,10 +6,8 @@
 
 package Sms
 
-import (
-	"fmt"
-	"os"
-)
+//	"fmt"
+//	"os"
 
 var Sms struct {
 }
