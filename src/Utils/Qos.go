@@ -18,7 +18,7 @@ var maxCount int
 
 func init() {
 	conf := Conf{}
-	maxCount := conf.GetInt("server", "qos")
+	maxCount = conf.GetInt("server", "qos")
 	ingCountChan = make(chan int, maxCount)
 }
 

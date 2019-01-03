@@ -1,38 +1,22 @@
 package main
 
-import "fmt"
-import "time"
-
-// import "github.com/go-sql-driver/mysql"
-// import "github.com/go-redis/redis"
-// import "github.com/uber-go/zap"
-// import "github.com/axgle/mahonia"
-// import "github.com/imroc/req"
-// import "github.com/360EntSecGroup-Skylar/excelize"
-// import "github.com/go-gomail/gomail"
-// import "github.com/dchest/captcha"
-
-import "Utils"
-
-func ProcessLogic(qos Utils.Qos, element string) {
-	v := qos.GetStatus()
-	fmt.Println(v)
-	qos.Add(1)
-	time.Sleep(time.Duration(1) * time.Second)
-	qos.Cut(1)
-}
+import (
+	"Signal"
+	"flag"
+	"fmt"
+	"os"
+)
 
 func main() {
+	cc := flag.String("c", "help", "请输入指令：\n -c start 启动程序\n -c restart 重启程序\n -c stop 停止程序\n")
+	flag.Parse()
+	command := *cc // 指针转换为值
 
-	// [2]
-	qos := Utils.Qos{0, 0}
-
-	key := "test_go"
-
-	for {
-		val, err := client.RPop(key).Result()
-		if err == nil {
-			go ProcessLogic(qos, val)
-		}
+	switch command {
+	case "start", "restart", "stop":
+		Signal.Run(command)
+	default:
+		fmt.Println("指令有误,请执行 --help 查看帮助信息")
+		os.Exit(0)
 	}
 }
