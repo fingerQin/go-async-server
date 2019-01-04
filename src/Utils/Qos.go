@@ -53,6 +53,12 @@ func (qos Qos) Add(val int) bool {
 	return true
 }
 
+// 获取当前正在处理的消息数量。
+// 保证每个消息都能正确处理完成。
+func (qos Qos) GetIngCount() int {
+	return len(ingCountChan)
+}
+
 /**
  * 获取当前 Qos 相关状态。
  * @return map[string]int

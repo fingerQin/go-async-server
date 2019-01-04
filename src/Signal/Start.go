@@ -14,7 +14,9 @@ import (
 	"os/signal"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"syscall"
+	"time"
 )
 
 // 是否退出当前程序。
@@ -27,8 +29,13 @@ var is_stop bool = false
  * @return void
  */
 func Start(pidSavePath string) {
-	if runtime.GOOS == "windows" {
-		fmt.Println("不支持 windows 系统")
+	if runtime.GOOS != "linux" {
+		fmt.Println("只支持 Linux 系统")
+		os.Exit(0)
+	}
+
+	if checkProgramRun(pidSavePath) == true {
+		fmt.Println("程序已经启动,请勿频繁启动")
 		os.Exit(0)
 	}
 
@@ -78,11 +85,32 @@ func timer() {
 	key := "test_go"
 	for {
 		if is_stop {
+			waitServiceDone()
 			break
 		}
 		val, err := redisClient.RPop(key).Result()
 		if err == nil {
 			go ProcessLogic(qos, val)
 		}
+	}
+}
+
+// 等待正在执行的业务正确执行完成。
+// 通过休眠循环实现。
+func waitServiceDone() {
+	qos := Utils.Qos{}
+	file, err := os.OpenFile("ingCount", os.O_RDWR|os.O_CREATE, 0766)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(0) // 进程 PPID 写入失败
+	}
+	defer file.Close()
+	data := strconv.Itoa(qos.IngCount())
+	file.WriteString(data)
+
+	for qos.IngCount > 0 {
+
+		//	time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(300 * time.Millisecond)
 	}
 }

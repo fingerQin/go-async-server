@@ -15,6 +15,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"syscall"
 )
 
 const START = "start"
@@ -34,6 +35,20 @@ func Run(command string) {
 	case RESTART:
 		Restart(pidSavePath)
 		break
+	}
+}
+
+// 检验当前程序是否处于运行中。
+func checkProgramRun(pidSavePath string) bool {
+	pid := getFileSavePID(pidSavePath)
+	if pid == 0 {
+		return false
+	}
+	err := syscall.Kill(pid, 0)
+	if err != nil {
+		return false
+	} else {
+		return true
 	}
 }
 
