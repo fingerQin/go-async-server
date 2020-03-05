@@ -105,7 +105,7 @@ func waitServiceDone() {
 		os.Exit(0) // 进程 PPID 写入失败
 	}
 	defer file.Close()
-	data := strconv.Itoa(qos.IngCount())
+	data := strconv.Itoa(qos.IngCount)
 	file.WriteString(data)
 
 	for qos.IngCount > 0 {

@@ -14,7 +14,7 @@ import (
 	"os"
 )
 
-import "github.com/go-ini/ini"
+import "gopkg.in/ini.v1"
 
 type Conf struct {
 }
